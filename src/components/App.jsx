@@ -1,6 +1,7 @@
 import { Component } from 'react';
 import { Searchbar } from './Searchbar/Searchbar';
 import fetchImages from '../Services/fetchImages';
+// import { fetchImages } from '../Services/fetchImages';
 import { ImageGallery } from './ImageGallery/ImageGallery';
 import Loader from './Loader/Loader';
 import { Button } from './Button/Button';
@@ -17,18 +18,25 @@ export class App extends Component {
     loadMore: false,
     error: null,
     showModal: false,
-    largeImageURL: '',
+    largeImageURL: 'largeImageURL',
     id: '',
   };
 
   componentDidUpdate(_, prevState) {
-    console.log(prevState.page);
-    console.log(this.state.page);
+    // console.log(prevState.page);
+    // console.log(this.state.page);
     const { searchQuery, page } = this.state;
     if (prevState.searchQuery !== searchQuery || prevState.page !== page) {
       this.getImages(searchQuery, page);
     }
+    // if (this.state.page > 1) {
+    //   window.scrollTo({
+    //     top: document.documentElement.scrollHeight,
+    //     behavior: 'smooth',
+    //   });
+    // }
   }
+
   formSubmit = searchQuery => {
     this.setState({
       searchQuery,
@@ -38,6 +46,7 @@ export class App extends Component {
     });
     console.log(searchQuery);
   };
+
   getImages = async (searchQuery, page) => {
     this.setState({ isLoading: true });
     if (!searchQuery) {
@@ -45,7 +54,25 @@ export class App extends Component {
     }
     try {
       const { hits, totalHits } = await fetchImages(searchQuery, page);
-      console.log(hits, totalHits);
+      console.log(totalHits, hits);
+      // let newHits;
+      // hits.reduce(
+      //   (newHits, item) =>
+      //     newHits([hits.id, hits.largeImageURL, hits.webformatURL]),
+      //   0
+      // );
+      // console.log(newHits);
+
+      // hits.forEach((item, i) => {
+      //   console.log(item.id);
+      //   console.log([item.id, item.largeImageURL, item.webformatURL]);
+      //   // const try1 = [item.slise(1, 2)];
+      //   // console.log([try1]);
+      // });
+
+      if (totalHits === 0) {
+        alert('Sorry, we do not find images');
+      }
       this.setState(prevState => ({
         images: [...prevState.images, ...hits],
         loadMore: this.state.page < Math.ceil(totalHits / this.state.per_page),
@@ -82,13 +109,13 @@ export class App extends Component {
     return (
       <div>
         <Searchbar onSubmit={this.formSubmit} />
-
-        {isLoading ? (
+        {/* {isLoading ? (
           <Loader />
         ) : (
           <ImageGallery images={images} openModal={this.openModal} />
-        )}
-
+        )} */}
+        <Loader isLoading={isLoading} />
+        <ImageGallery images={images} openModal={this.openModal} />
         {loadMore && <Button onloadMore={this.onloadMore} page={page} />}
         {/* портал для модалки в index.html */}
         {showModal && (
@@ -98,6 +125,7 @@ export class App extends Component {
     );
   }
 }
+
 //   return (
 //     <div
 //       style={{

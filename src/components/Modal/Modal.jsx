@@ -32,7 +32,7 @@ export class Modal extends Component {
     return createPortal(
       <div className="Overlay" onClick={this.handleBackDropClick}>
         <div className="Modal">
-          <img src={this.props.largeImageURL} alt="" />
+          <img src={this.props.largeImageURL} alt={this.props.tags} />
         </div>
       </div>,
       modalRoot
@@ -42,5 +42,5 @@ export class Modal extends Component {
 
 Modal.propTypes = {
   onClose: PropTypes.func.isRequired,
-  largeImageUrl: PropTypes.string.isRequired,
+  largeImageUrl: PropTypes.string,
 };
