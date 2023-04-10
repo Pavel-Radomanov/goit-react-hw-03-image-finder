@@ -49,32 +49,29 @@ export class App extends Component {
 
   getImages = async (searchQuery, page) => {
     this.setState({ isLoading: true });
+
     if (!searchQuery) {
       return;
     }
     try {
       const { hits, totalHits } = await fetchImages(searchQuery, page);
       console.log(totalHits, hits);
-      // let newHits;
-      // hits.reduce(
-      //   (newHits, item) =>
-      //     newHits([hits.id, hits.largeImageURL, hits.webformatURL]),
-      //   0
-      // );
-      // console.log(newHits);
-
-      // hits.forEach((item, i) => {
-      //   console.log(item.id);
-      //   console.log([item.id, item.largeImageURL, item.webformatURL]);
-      //   // const try1 = [item.slise(1, 2)];
-      //   // console.log([try1]);
-      // });
+      const normalizedImages = hits.map(
+        ({ id, webformatURL, largeImageURL, tags }) => {
+          return {
+            id,
+            webformatURL,
+            largeImageURL,
+            tags,
+          };
+        }
+      );
 
       if (totalHits === 0) {
         alert('Sorry, we do not find images');
       }
       this.setState(prevState => ({
-        images: [...prevState.images, ...hits],
+        images: [...prevState.images, ...normalizedImages],
         loadMore: this.state.page < Math.ceil(totalHits / this.state.per_page),
       }));
     } catch (error) {
